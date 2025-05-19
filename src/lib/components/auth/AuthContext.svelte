@@ -129,7 +129,7 @@
 <div class="page-container">
 	<form
 		id="form-{uid}"
-		class={twMerge('md:card card-sm', theme.form)}
+		class={twMerge('md:card md:card-sm', theme.form)}
 		method="POST"
 		autocomplete="off"
 		use:enhance={handleSubmit}

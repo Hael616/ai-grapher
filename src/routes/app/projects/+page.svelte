@@ -3,11 +3,6 @@
 	import layoutStore from '$lib/components/layout/layout.svelte';
 
 	onMount(() => {
-		layoutStore.setPageTitle('Dashboard');
+		layoutStore.setPageTitle('My Projects');
 	});
 </script>
-
-<div class="card">
-	<h2>Welcome to your dashboard</h2>
-	<p>This is your main content area.</p>
-</div>

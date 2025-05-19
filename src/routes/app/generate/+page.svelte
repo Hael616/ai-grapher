@@ -3,11 +3,11 @@
 	import layoutStore from '$lib/components/layout/layout.svelte';
 
 	onMount(() => {
-		layoutStore.setPageTitle('Dashboard');
+		layoutStore.setPageTitle('Generate');
 	});
 </script>
 
 <div class="card">
-	<h2>Welcome to your dashboard</h2>
-	<p>This is your main content area.</p>
+	<h2>Generate</h2>
+	<p>This page is under construction, users can generate new images here</p>
 </div>
