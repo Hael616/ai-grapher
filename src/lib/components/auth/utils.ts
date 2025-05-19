@@ -1,13 +1,13 @@
-import type { Snippet } from 'svelte';
+import type { Snippet } from "svelte";
 
 export type AuthFlow =
-	| 'password'
-	| 'forgot-password'
-	| 'reset-password'
-	| 'magic-link'
-	| 'google'
-	| 'github'
-	| 'apple';
+	| "password"
+	| "forgot-password"
+	| "reset-password"
+	| "magic-link"
+	| "google"
+	| "github"
+	| "apple";
 
 export interface AuthContextProps {
 	title: string;
@@ -20,6 +20,7 @@ export interface AuthContextProps {
 	showExtras?: boolean;
 	loading: boolean;
 	description?: string;
+	showDescription?: boolean;
 	// Theme object approach for custom Tailwind classes
 	theme?: {
 		container?: string;

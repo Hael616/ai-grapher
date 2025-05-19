@@ -28,13 +28,12 @@
 
 	let errors = $derived(page.form?.errors?.[name] || []);
 
-	const baseStyle =
-		'w-full rounded-md border bg-white px-3 py-2 text-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none';
-	const errorStyle = 'border-red-500 focus:ring-red-300';
+	const baseStyle = 'form-input';
+	const errorStyle = 'form-input-error';
 </script>
 
 <div class={twMerge('mt-5 grid w-full gap-1.5', containerClass)} transition:slide>
-	<label for="{name}-{uid}" class={twMerge('text-sm font-medium text-gray-800', labelClass)}>
+	<label for="{name}-{uid}" class={twMerge('form-label text-left', labelClass)}>
 		{label}{restProps.required ? ' *' : ''}
 	</label>
 
@@ -46,7 +45,7 @@
 				type={showPassword ? 'text' : 'password'}
 				bind:value
 				{...restProps}
-				class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-gray-300', inputClass)}
+				class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
 				aria-invalid={errors.length > 0}
 				aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 			/>
@@ -54,7 +53,7 @@
 				type="button"
 				tabindex="-1"
 				onclick={togglePasswordVisibility}
-				class="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+				class="text-foreground-muted hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
 				aria-label={showPassword ? 'Hide password' : 'Show password'}
 			>
 				{#if showPassword}
@@ -64,11 +63,6 @@
 				{/if}
 			</button>
 		</div>
-		{#if name === 'password' && page.route.id?.includes('/login')}
-			<a href="forgot-password" class="text-right text-sm text-gray-400 underline"
-				>forgot password?</a
-			>
-		{/if}
 	{:else if type === 'textarea'}
 		<textarea
 			{name}
@@ -76,7 +70,7 @@
 			bind:value
 			rows="5"
 			{...restProps}
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-gray-300', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		></textarea>
@@ -85,7 +79,7 @@
 			{name}
 			id="{name}-{uid}"
 			bind:value
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-gray-300', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		>
@@ -100,7 +94,7 @@
 			id="{name}-{uid}"
 			bind:value
 			{...restProps}
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-gray-300', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		/>
@@ -108,7 +102,7 @@
 
 	{#if errors.length > 0}
 		<div
-			class={twMerge('mt-1 grid gap-1 text-sm text-red-600', errorClass)}
+			class={twMerge('text-error mt-1 grid gap-1 text-sm', errorClass)}
 			id="{name}-error"
 			role="alert"
 			transition:slide
@@ -117,5 +111,11 @@
 				<span>{error}</span>
 			{/each}
 		</div>
+	{/if}
+
+	{#if name === 'password' && page.route.id?.includes('/login')}
+		<a href="forgot-password" class="text-foreground-muted text-right text-sm underline"
+			>forgot password?</a
+		>
 	{/if}
 </div>

@@ -15,7 +15,6 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1rem;
-		background-color: #f8fafc;
 	}
 
 	main {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { debug, trace, warn } from '$lib/utils/logger.js';
 
 	let { data } = $props();
 
@@ -7,17 +8,17 @@
 
 	const handleSignOut = async () => {
 		const { error } = await supabase.auth.signOut();
-		if (!error) {
-			console.log('successfully logged out');
 
-			goto('/auth/login');
-		} else {
-			console.log('Tracing error while signing out', error);
+		if (error) {
+			warn('Error while signing out', error);
+			return;
 		}
+
+		goto('/auth/login');
 	};
 </script>
 
 <div class="flex min-h-40 flex-col items-center justify-center gap-5 border">
 	<div>Hey</div>
-	<button class="w-fit cursor-pointer border px-2" onclick={() => handleSignOut()}>logout</button>
+	<button class="button button-primary" onclick={handleSignOut}>logout</button>
 </div>

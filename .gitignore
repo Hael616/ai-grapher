@@ -1,5 +1,12 @@
-test-results
-node_modules
+# Code Editor
+.vscode/
+.idea/
+
+# Test
+test-results/
+
+# Node
+node_modules/
 
 # Output
 .output

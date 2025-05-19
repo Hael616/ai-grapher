@@ -1,3 +1,212 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+	/* 
+     * PRIMARY COLORS 
+     * Use for buttons, highlights, and key interactive elements.
+     */
+	--color-primary: #a78bfa; /* Soft violet (Violet 400) – fresh and light */
+	--color-primary-dark: #8b5cf6; /* Violet 500 – hover/active */
+	--color-on-primary: #ffffff; /* Text/icons on top of primary */
+
+	/* SECONDARY COLORS – For optional/secondary actions */
+	--color-secondary: #5eead4; /* Teal 300 */
+	--color-secondary-dark: #2dd4bf; /* Teal 400 */
+	--color-on-secondary: #0f172a; /* Text on secondary */
+
+	/* 
+     * BACKGROUND COLORS 
+     * Use for page and card backgrounds.
+     */
+	--color-background: #ffffff; /* App/page background */
+	--color-surface: #f9fafb; /* Cards, modals, input fields */
+
+	/* 
+     * TEXT / FOREGROUND COLORS 
+     * Use for content text, headings, muted labels, etc.
+     */
+	--color-foreground: #1f2937; /* Dark Gray 800 – clean and readable */
+	--color-foreground-muted: #6b7280; /* Gray 500 – supportive/subtext */
+	--color-foreground-subtle: #9ca3af; /* Gray 400 – tertiary info like timestamps */
+
+	/* 
+     * BORDER / DIVIDER COLORS 
+     * Use for card borders, input outlines, dividers.
+     */
+	--color-border: #e5e7eb; /* Light gray border */
+
+	/* 
+     * STATUS COLORS 
+     * Use for feedback: errors, success, warnings, info messages.
+     */
+	--color-error: #ef4444; /* Red 500 – errors */
+	--color-success: #22c55e; /* Green 500 – confirmations */
+	--color-warning: #facc15; /* Yellow 400 – soft warning */
+	--color-info: #3b82f6; /* Blue 500 – info/tips */
+
+	/* 
+     * BREAKPOINTS 
+     * Use for responsive design.
+     */
+	--breakpoint-xs: 30rem;
+	--breakpoint-2xl: 100rem;
+	--breakpoint-3xl: 120rem;
+}
+
+@layer base {
+	body {
+		@apply bg-background text-foreground;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply text-foreground;
+	}
+
+	p {
+		@apply text-foreground-muted;
+	}
+}
+
+@layer utilities {
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border-width: 0;
+	}
+
+	.heading-xl {
+		@apply text-xl font-semibold text-gray-900;
+	}
+
+	.text-subtle {
+		@apply text-sm text-gray-600;
+	}
+}
+
+@layer components {
+	/* Button Components */
+	.button {
+		@apply flex cursor-pointer items-center justify-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+	}
+
+	.button-primary {
+		@apply bg-primary hover:bg-primary-dark text-on-primary;
+	}
+
+	.button-secondary {
+		@apply bg-secondary hover:bg-secondary-dark text-on-secondary;
+	}
+
+	.button-outline {
+		@apply border-primary text-primary hover:bg-primary hover:text-on-primary border;
+	}
+
+	.button-outline-secondary {
+		@apply border-secondary text-secondary hover:bg-secondary hover:text-on-secondary border;
+	}
+
+	/* Form Components */
+	.form-group {
+		@apply relative space-y-1.5;
+	}
+
+	.form-label {
+		@apply text-foreground text-sm font-medium;
+	}
+
+	.form-input {
+		@apply text-foreground w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors;
+	}
+
+	.form-input:focus {
+		@apply border-primary ring-primary ring-1 outline-none;
+	}
+
+	.form-input:disabled {
+		@apply cursor-not-allowed bg-gray-50 opacity-50;
+	}
+
+	.form-error {
+		@apply flex w-full items-center gap-3 rounded bg-red-100 p-3 text-sm text-red-800;
+	}
+
+	.form-success {
+		@apply flex w-full items-center gap-3 rounded bg-green-100 p-3 text-sm text-green-800;
+	}
+
+	.form-hint {
+		@apply text-foreground-muted text-sm;
+	}
+
+	.form-divider {
+		@apply my-4 flex w-full items-center gap-3;
+	}
+
+	.form-divider::before,
+	.form-divider::after {
+		@apply h-px flex-1 bg-gray-200 content-[''];
+	}
+
+	/* Layout Components */
+	.page-container {
+		@apply flex min-h-screen items-center justify-center bg-gray-50 p-4;
+	}
+
+	.card {
+		@apply w-full rounded-lg bg-white p-8 shadow-md;
+	}
+
+	.card-sm {
+		@apply max-w-lg;
+	}
+
+	.card-content {
+		@apply flex flex-col items-center gap-6 text-center;
+	}
+
+	/* Icon Components */
+	.icon-circle {
+		@apply flex h-16 w-16 items-center justify-center rounded-full;
+	}
+
+	.icon-circle-error {
+		@apply bg-red-100;
+	}
+
+	.icon-circle-success {
+		@apply bg-green-100;
+	}
+
+	.icon-circle-warning {
+		@apply bg-yellow-100;
+	}
+
+	.icon-circle-info {
+		@apply bg-blue-100;
+	}
+
+	/* Action Components */
+	.actions-group {
+		@apply flex gap-4;
+	}
+
+	.button-soft {
+		@apply bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors;
+	}
+
+	.button-outline-soft {
+		@apply flex items-center gap-2 rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50;
+	}
+}

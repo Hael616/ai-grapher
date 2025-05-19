@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	import { slide } from 'svelte/transition';
 	import { twMerge } from 'tailwind-merge';
 	import type { AuthContextProps, AuthFlow } from './utils';
+	import type { Provider } from '@supabase/supabase-js';
+	import { createBrowserClient } from '@supabase/ssr';
+	import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+	import { debug, warn } from '../../utils/logger';
 
 	// Props with defaults
 	let {
@@ -12,13 +17,14 @@
 		children,
 		extras,
 		flow = $bindable('password' as AuthFlow),
-		redirectTo = '/dashboard',
-		socialProviders = ['google', 'github', 'apple'],
+		redirectTo = `${page.url.origin}/app`,
+		socialProviders = ['google'],
 		theme = {}, // Default empty theme object
 		loading = $bindable(false),
 		showSocials = true,
 		showExtras = true,
-		description = ''
+		description = '',
+		showDescription = true
 	}: AuthContextProps = $props();
 
 	// Destructure theme with defaults
@@ -79,7 +85,8 @@
 				if (result.type === 'success') {
 					successMessage = result.data?.message || 'Success!';
 				} else {
-					errorMessage = result.data?.message || 'Something went wrong';
+					// @ts-ignore
+					errorMessage = result.status === 400 ? result.data?.message : 'Something went wrong';
 				}
 			} finally {
 				loading = false;
@@ -93,13 +100,20 @@
 			// Placeholder for Supabase integration
 			// In a real implementation, you would call Supabase here
 			console.log(`Authenticating with ${provider}`);
+			const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
 
-			// Mock auth delay
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			const { data, error } = await supabase.auth.signInWithOAuth({
+				provider: provider as Provider,
+				options: {
+					redirectTo
+				}
+			});
 
-			// Success would redirect via Supabase
-			successMessage = `${provider} authentication initiated`;
+			if (error) {
+				throw error;
+			}
 		} catch (err) {
+			warn('signInWithOAuth failed', err);
 			errorMessage = 'Failed to authenticate';
 			console.error(err);
 		} finally {
@@ -112,144 +126,135 @@
 	const actionUrl = title === 'Sign in' ? '/auth/signup' : '/auth/login';
 </script>
 
-<div
-	id="context-{uid}"
-	class={twMerge('flex h-full w-full items-center justify-center', container)}
->
+<div class="page-container">
 	<form
 		id="form-{uid}"
-		class={twMerge('flex w-full max-w-md flex-col gap-6 p-6', form)}
+		class={twMerge('md:card card-sm', theme.form)}
 		method="POST"
 		autocomplete="off"
 		use:enhance={handleSubmit}
 		aria-label={`${title} form`}
 	>
-		<div class={twMerge('grid w-full grid-cols-1 justify-items-center gap-2', header)}>
-			<h1 class={twMerge('m-0 text-2xl font-medium', heading)}>{title}</h1>
-			<p class={twMerge('m-0 text-center text-sm text-gray-600', descriptionClass)}>
-				{#if description}
-					{description}
-				{:else if flow === 'password' || flow === 'magic-link'}
-					{flow === 'password'
-						? `${title} with email and password`
-						: `${title} via magic link with your email`}
-				{:else}
-					{title} with {flow}
-				{/if}
-			</p>
+		<div class="card-content">
+			<h1 class="heading-xl">{title}</h1>
+			{#if showDescription}
+				<p class="text-subtle">
+					{#if description}
+						{description}
+					{:else if flow === 'password' || flow === 'magic-link'}
+						{flow === 'password'
+							? `${title} with email and password`
+							: `${title} via magic link with your email`}
+					{:else}
+						{title} with {flow}
+					{/if}
+				</p>
+			{/if}
 
 			{#if errorMessage}
-				<div
-					class={twMerge('mt-2 w-full rounded bg-red-100 p-3 text-sm text-red-800', error)}
-					role="alert"
-					transition:slide
-				>
-					{errorMessage}
+				<div class="form-error">
+					<div class="icon-circle-error h-8 w-8">
+						<iconify-icon icon="mdi:alert-circle" width="20" height="20" class="text-red-600"
+						></iconify-icon>
+					</div>
+					<p class="m-0 text-red-800">{errorMessage}</p>
 				</div>
 			{/if}
 
 			{#if successMessage}
 				<div
-					class={twMerge('mt-2 w-full rounded bg-green-100 p-3 text-sm text-green-800', success)}
+					class="flex w-full items-center gap-3 rounded bg-green-100 p-3 text-sm text-green-800"
 					role="status"
 					transition:slide
 				>
-					{successMessage}
+					<div class="icon-circle-success h-8 w-8">
+						<iconify-icon icon="mdi:check-circle" width="20" height="20" class="text-green-600"
+						></iconify-icon>
+					</div>
+					<p class="m-0 text-green-800">{successMessage}</p>
 				</div>
 			{/if}
-		</div>
 
-		<div class={twMerge('grid w-full grid-cols-1 gap-4', fields)}>
-			{@render children()}
-		</div>
+			<div class={twMerge('w-full space-y-4', theme.fields)}>
+				{@render children()}
+			</div>
 
-		<div class="flex w-full flex-col items-center gap-4">
-			<!-- Regular form submit button for password/magic-link flow -->
-			{#if flow === 'password' || flow === 'magic-link' || flow === 'forgot-password' || flow === 'reset-password'}
-				<button
-					type="submit"
-					class={twMerge(
-						'flex min-w-40 items-center justify-center rounded bg-blue-200 px-4 py-2 text-base font-medium transition-colors hover:bg-blue-300 disabled:cursor-not-allowed',
-						submitButton
-					)}
-					disabled={loading}
-					aria-busy={loading}
-				>
-					{#if loading}
-						<span class="flex items-center justify-center">
-							<span class="sr-only">Loading</span>
-							<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24"
-							></iconify-icon>
-						</span>
-					{:else}
-						{flow.includes('password') ? title : 'Send magic link'}
-					{/if}
-				</button>
-
-				{#if showExtras}
+			<div class="flex w-full flex-col items-center gap-4">
+				<!-- Regular form submit button for password/magic-link flow -->
+				{#if flow === 'password' || flow === 'magic-link' || flow === 'forgot-password' || flow === 'reset-password'}
 					<button
-						type="button"
-						class={twMerge(
-							'cursor-pointer border-none bg-transparent p-0 text-sm hover:underline',
-							link
-						)}
-						onclick={() => changeAuthMethod(flow === 'password' ? 'magic-link' : 'password')}
+						type="submit"
+						class={twMerge('button-soft button w-full', theme.submitButton)}
+						disabled={loading}
+						aria-busy={loading}
 					>
-						{flow === 'password' ? `${title} with magic link instead` : `${title} with password`}
+						{#if loading}
+							<span class="flex items-center justify-center">
+								<span class="sr-only">Loading</span>
+								<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24"
+								></iconify-icon>
+							</span>
+						{:else}
+							{flow.includes('password') ? 'Sign in' : 'Send magic link'}
+						{/if}
 					</button>
-				{/if}
-			{/if}
 
-			{#if showSocials && socialProviders.length > 0}
-				<div class={twMerge('my-2 flex w-full items-center', divider)}>
-					<div class="h-px flex-1 bg-gray-200"></div>
-					<span class="px-3 text-sm text-gray-500">or</span>
-					<div class="h-px flex-1 bg-gray-200"></div>
-				</div>
+					{#if flow === 'magic-link'}
+						<p class="form-hint">We'll send you a magic link to sign in password-free</p>
+					{/if}
 
-				<div class="flex w-full items-center justify-center gap-2">
-					{#each socialProviders as provider}
+					{#if showExtras}
 						<button
 							type="button"
-							class={twMerge(
-								"{loading && 'pointer-events-none'} flex w-fit cursor-pointer items-center justify-center gap-2 rounded border border-gray-200 bg-white px-4 py-2.5 text-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed",
-								socialButton
-							)}
-							onclick={() => changeAuthMethod(provider as AuthFlow)}
-							disabled={loading}
+							class="text-subtle hover:text-foreground cursor-pointer border-none bg-transparent p-0 hover:underline"
+							onclick={() => changeAuthMethod(flow === 'password' ? 'magic-link' : 'password')}
 						>
-							<iconify-icon icon="mdi:{provider}" width="20" height="20"></iconify-icon>
-							<span class="sr-only"
-								>Continue with {provider.charAt(0).toUpperCase() + provider.slice(1)}</span
-							>
+							{flow === 'password' ? `${title} with magic link instead` : `${title} with password`}
 						</button>
-					{/each}
-				</div>
-			{/if}
+					{/if}
+				{/if}
 
-			{#if extras}
-				{@render extras()}
-			{:else if showExtras}
-				<div class={twMerge('mt-2 flex flex-col items-center gap-2', alternate)}>
-					<span class="text-sm text-gray-500">or</span>
-					<a href={actionUrl} class="text-sm hover:underline">{actionText}</a>
-				</div>
-			{/if}
+				{#if showSocials && socialProviders.length > 0}
+					<div class="my-4 flex w-full items-center gap-3">
+						<div class="h-px flex-1 bg-gray-200"></div>
+						<div class="form-divider">
+							<span class="text-subtle">or</span>
+						</div>
+						<div class="h-px flex-1 bg-gray-200"></div>
+					</div>
+
+					<div class="actions-group w-full justify-center">
+						{#each socialProviders as provider}
+							<button
+								type="button"
+								class={twMerge(
+									'button-outline-soft button',
+									socialProviders.length > 1 ? 'w-fit' : 'w-full',
+									theme.socialButton
+								)}
+								onclick={() => changeAuthMethod(provider as AuthFlow)}
+								disabled={loading}
+							>
+								<iconify-icon icon="mdi:{provider}" width="20" height="20"></iconify-icon>
+								<span class={socialProviders.length > 1 ? 'sr-only' : ''}
+									>Continue with {provider.charAt(0).toUpperCase() + provider.slice(1)}</span
+								>
+							</button>
+						{/each}
+					</div>
+				{/if}
+
+				{#if extras}
+					{@render extras()}
+				{:else if showExtras}
+					<div class="mt-4 flex flex-col items-center gap-2">
+						<span class="text-subtle">or</span>
+						<a href={actionUrl} class="text-subtle hover:text-foreground hover:underline"
+							>{actionText}</a
+						>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</form>
 </div>
-
-<style>
-	/* Screen reader only utility class */
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border-width: 0;
-	}
-</style>

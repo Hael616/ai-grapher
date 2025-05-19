@@ -3,16 +3,18 @@
 	import type { AuthFlow } from '$lib/components/auth/utils';
 	import Input from '$lib/components/Input.svelte';
 
-	let flow = $state<AuthFlow>('password');
+	let flow = $state<AuthFlow>('magic-link');
 	let loading = $state<boolean>(false);
 </script>
 
 <AuthContext
 	bind:loading
 	bind:flow
-	title="Sign in"
+	title="Welcome to AI-Grapher"
+	showDescription={false}
+	showExtras={false}
 	theme={{
-		form: ' max-w-lg w-full rounded shadow-md',
+		form: ' max-w-lg w-full rounded',
 		submitButton: 'cursor-pointer',
 		fields: 'gap-2'
 	}}
@@ -22,7 +24,6 @@
 		name="email"
 		type="email"
 		placeholder="Your email address"
-		required
 		autocomplete="email"
 		disabled={loading}
 	/>
@@ -32,8 +33,7 @@
 			label="Password"
 			name="password"
 			type="password"
-			placeholder="Your assword"
-			required
+			placeholder="Your password"
 			autocomplete="password"
 			disabled={loading}
 		/>
