@@ -73,26 +73,8 @@
 	}
 }
 
-@layer utilities {
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border-width: 0;
-	}
-
-	.heading-xl {
-		@apply text-xl font-semibold text-gray-900;
-	}
-
-	.text-subtle {
-		@apply text-sm text-gray-600;
-	}
+@utility sr-only {
+	@apply absolute h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap;
 }
 
 @layer components {
@@ -115,6 +97,14 @@
 
 	.button-outline-secondary {
 		@apply border-secondary text-secondary hover:bg-secondary hover:text-on-secondary border;
+	}
+
+	.button-soft {
+		@apply bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors;
+	}
+
+	.button-outline-soft {
+		@apply flex items-center gap-2 rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50;
 	}
 
 	/* Form Components */
@@ -200,13 +190,5 @@
 	/* Action Components */
 	.actions-group {
 		@apply flex gap-4;
-	}
-
-	.button-soft {
-		@apply bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors;
-	}
-
-	.button-outline-soft {
-		@apply flex items-center gap-2 rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50;
 	}
 }
