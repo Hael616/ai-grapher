@@ -13,11 +13,6 @@
 			icon: 'mdi:view-dashboard'
 		},
 		{
-			label: 'Generate',
-			href: '/app/generate',
-			icon: 'ri:ai-generate-2'
-		},
-		{
 			label: 'My Projects',
 			href: '/app/projects',
 			icon: 'mdi:folder'

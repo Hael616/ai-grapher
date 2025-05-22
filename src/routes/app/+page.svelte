@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { layoutStore } from '$lib/components/layout/layout.svelte';
+	import ProjectCard from '$lib/components/projects/ProjectCard.svelte';
 
 	const { data } = $props();
 
@@ -18,30 +19,51 @@
 		}
 	};
 
+	// Mock data - replace with actual data from your backend
 	const recentProjects = [
 		{
-			id: 1,
-			image: 'https://placehold.co/400x300',
-			title: 'Project 1',
-			createdAt: '2024-03-20'
+			id: '1',
+			user_id: '1',
+			name: 'Summer Collection',
+			description: 'Product images for summer clothing line',
+			cover_image_url:
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThG9OUmDa76UVBfc5el7c-ALmH4cBG-U6g5A&s',
+			model_status: 'ready',
+			created_at: '2024-03-20',
+			generation_count: 12
 		},
 		{
-			id: 2,
-			image: 'https://placehold.co/400x300',
-			title: 'Project 2',
-			createdAt: '2024-03-19'
+			id: '2',
+			user_id: '1',
+			name: 'Skincare Products',
+			description: 'Luxury skincare product photography',
+			cover_image_url:
+				'https://media-cldnry.s-nbcnews.com/image/upload/t_fit-1500w,f_auto,q_auto:best/rockcms/2024-06/240610-beauty-awards-2024-skincare-winners-vl-social-91be20.jpg',
+			model_status: 'training',
+			created_at: '2024-03-19',
+			generation_count: 8
 		},
 		{
-			id: 3,
-			image: 'https://placehold.co/400x300',
-			title: 'Project 3',
-			createdAt: '2024-03-18'
+			id: '3',
+			user_id: '1',
+			name: 'Electronics',
+			description: 'Tech product showcase',
+			cover_image_url:
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZW2iQNBFnQvAJZ7bTlKRPsRpOOIVmiVoDXg&s',
+			model_status: 'failed',
+			created_at: '2024-03-18',
+			generation_count: 15
 		},
 		{
-			id: 4,
-			image: 'https://placehold.co/400x300',
-			title: 'Project 4',
-			createdAt: '2024-03-17'
+			id: '4',
+			user_id: '1',
+			name: 'New Watch Collection',
+			description: 'Luxury timepiece photography',
+			cover_image_url:
+				'https://images.unsplash.com/photo-1524805444758-089113d48a6d?q=80&w=1000&auto=format&fit=crop',
+			model_status: 'pending',
+			created_at: '2024-03-17',
+			generation_count: 0
 		}
 	];
 </script>
@@ -49,17 +71,17 @@
 <div class="space-y-8">
 	<!-- Welcome Section -->
 	<div class="space-y-2">
-		<h1 class="text-2xl font-semibold">
+		<h1 class="text-foreground text-2xl font-semibold">
 			Welcome back, {session?.user?.user_metadata?.full_name.split(' ')[0]}
 		</h1>
-		<p class="text-gray-600">Let's turn your products into magic.</p>
+		<p class="text-foreground-muted">Let's turn your products into magic.</p>
 	</div>
 
 	<!-- Credits Section -->
 	<div class="card flex items-center justify-between">
 		<div class="space-y-1">
-			<p class="text-sm font-medium text-gray-600">Credits Left</p>
-			<p class="text-2xl font-semibold">
+			<p class="text-foreground-muted text-sm font-medium">Credits Left</p>
+			<p class="text-foreground text-2xl font-semibold">
 				{user.credits.total - user.credits.used}/{user.credits.total}
 			</p>
 		</div>
@@ -72,49 +94,23 @@
 	<!-- Recent Projects Section -->
 	<div class="space-y-4">
 		<div class="flex items-center justify-between">
-			<h2 class="text-lg font-semibold">Recent Projects</h2>
+			<h2 class="text-foreground text-lg font-semibold">Recent Projects</h2>
 			<div class="flex items-center gap-4">
 				<a href="/app/projects" class="text-primary text-sm hover:underline">View All Projects</a>
 				<a
-					href="/app/generate"
+					href="/app/projects/new"
 					class="button button-primary hidden md:inline-flex"
-					aria-label="Generate new image"
+					aria-label="Create new project"
 				>
 					<iconify-icon icon="mdi:plus" width="20" height="20"></iconify-icon>
-					<span>Generate New Image</span>
+					<span>New Project</span>
 				</a>
 			</div>
 		</div>
 
-		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each recentProjects as project}
-				<div class="card p-0">
-					<img src={project.image} alt={project.title} class="h-48 w-full object-cover" />
-					<div class="card-content p-4">
-						<div class="mb-4 flex w-full items-center justify-between">
-							<div>
-								<h3 class="font-medium">{project.title}</h3>
-								<p class="text-sm text-gray-500">
-									{new Date(project.createdAt).toLocaleDateString()}
-								</p>
-							</div>
-							<div class="flex gap-2">
-								<a
-									href="/app/projects/{project.id}"
-									class="button button-outline-soft"
-									aria-label="View project"
-								>
-									<iconify-icon icon="mdi:eye" width="20" height="20"></iconify-icon>
-									<span class="sr-only">View</span>
-								</a>
-								<button class="button button-outline-soft" aria-label="Regenerate project">
-									<iconify-icon icon="mdi:refresh" width="20" height="20"></iconify-icon>
-									<span class="sr-only">Regenerate</span>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				<ProjectCard {project} />
 			{/each}
 		</div>
 	</div>
@@ -122,12 +118,12 @@
 	<!-- Generate New Button (Mobile Only) -->
 	<div class="fixed right-0 bottom-0 left-0 p-4 md:hidden">
 		<a
-			href="/app/generate"
+			href="/app/projects"
 			class="button button-primary w-full shadow-lg"
-			aria-label="Generate new image"
+			aria-label="Create new project"
 		>
 			<iconify-icon icon="mdi:plus" width="24" height="24"></iconify-icon>
-			<span>Generate New Image</span>
+			<span>New Project</span>
 		</a>
 	</div>
 

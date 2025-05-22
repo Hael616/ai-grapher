@@ -5,7 +5,7 @@
 	import StyleSelector from '$lib/components/generate/StyleSelector.svelte';
 
 	// Set page title
-	layoutStore.pageTitle = 'Generate New Product Image';
+	layoutStore.pageTitle = 'Generate Images for Project';
 
 	let selectedFiles: File[] = $state([]);
 	let selectedType: string | null = $state(null);
@@ -46,30 +46,32 @@
 <div class="mx-auto max-w-3xl space-y-8">
 	<!-- Welcome Section -->
 	<div class="space-y-2 text-center">
-		<h1 class="text-2xl font-semibold">Generate New Product Image</h1>
-		<p class="text-gray-600">
-			Welcome! Upload your product image and generate stunning visuals in seconds.
+		<h1 class="text-foreground text-2xl font-semibold">Generate Images for Project</h1>
+		<p class="text-foreground-muted">
+			Upload your product image and generate stunning visuals in seconds.
 		</p>
 	</div>
 
 	<div class="space-y-8">
 		<!-- Upload Section -->
 		<section class="space-y-4">
-			<h2 class="text-lg font-semibold">Upload Product Image</h2>
+			<h2 class="text-foreground text-lg font-semibold">Upload Product Image</h2>
 			<FileUpload on:file={handleFileSelect} />
 		</section>
 
 		<!-- Product Type Section -->
 		<section class="space-y-4">
-			<h2 class="text-lg font-semibold">Select Product Type</h2>
-			<p class="text-sm text-gray-500">This helps us style the scene to match your product.</p>
+			<h2 class="text-foreground text-lg font-semibold">Select Product Type</h2>
+			<p class="text-foreground-muted text-sm">
+				This helps us style the scene to match your product.
+			</p>
 			<ProductTypeSelector initialType={selectedType} on:select={handleTypeSelect} />
 		</section>
 
 		<!-- Style Section -->
 		<section class="space-y-4">
-			<h2 class="text-lg font-semibold">Choose a Style / Scene</h2>
-			<p class="text-sm text-gray-500">How should your product be presented?</p>
+			<h2 class="text-foreground text-lg font-semibold">Choose a Style / Scene</h2>
+			<p class="text-foreground-muted text-sm">How should your product be presented?</p>
 			<StyleSelector initialStyle={selectedStyle} on:select={handleStyleSelect} />
 		</section>
 
@@ -88,15 +90,15 @@
 					Generate Images
 				{/if}
 			</button>
-			<p class="text-center text-sm text-gray-500">
-				You have <span class="font-medium">{user.credits.balance} credits</span> remaining.
+			<p class="text-foreground-muted text-center text-sm">
+				You have <span class="text-foreground font-medium">{user.credits.balance} credits</span> remaining.
 			</p>
 		</section>
 
 		{#if generatedImages.length > 0}
 			<!-- Generated Images Section -->
 			<section class="space-y-4">
-				<h2 class="text-lg font-semibold">Generated Images</h2>
+				<h2 class="text-foreground text-lg font-semibold">Generated Images</h2>
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{#each generatedImages as image, index}
 						<div class="card">
@@ -128,9 +130,9 @@
 		{/if}
 
 		<!-- Tips Section -->
-		<section class="rounded-lg border bg-gray-50 p-4">
-			<h2 class="mb-2 text-lg font-semibold">Tips</h2>
-			<ul class="list-inside list-disc space-y-1 text-sm text-gray-600">
+		<section class="card">
+			<h2 class="text-foreground mb-2 text-lg font-semibold">Tips</h2>
+			<ul class="text-foreground-muted list-inside list-disc space-y-1 text-sm">
 				<li>Transparent images work best for apparel and skincare products.</li>
 				<li>You can refine the background later in "My Projects".</li>
 			</ul>

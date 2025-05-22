@@ -4,7 +4,7 @@ import {
 	PUBLIC_SUPABASE_ANON_KEY,
 	PUBLIC_SUPABASE_URL,
 } from "$env/static/public";
-import { debug, warn } from "./lib/utils/logger";
+import { warn } from "./lib/utils/logger";
 import { sequence } from "@sveltejs/kit/hooks";
 
 const chromeDevTools: Handle = async ({ event, resolve }) => {
@@ -70,8 +70,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 	// Regex of protected routes
 	const protectedRoutes = ["/app/*"];
-
-	debug("authGuard", event.url.toString());
 
 	// Check if there is a code in the url
 	const code = event.url.searchParams.get("code");

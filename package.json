@@ -14,7 +14,10 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"supabase:generate": "supabase gen types typescript --local > ./src/lib/types/database.types.ts",
+		"supabase:migrate": "supabase migration up",
+		"supabase:push": "supabase db push"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -55,6 +58,7 @@
 		"@supabase/supabase-js": "^2.49.4",
 		"iconify-icon": "^2.3.0",
 		"prisma": "^6.6.0",
+		"svelte-sonner": "^1.0.1",
 		"tailwind-merge": "^3.2.0",
 		"zod": "^3.24.2"
 	}

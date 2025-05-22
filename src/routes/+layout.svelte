@@ -4,6 +4,7 @@
 	import 'iconify-icon';
 	import { invalidate } from '$app/navigation';
 	import Seo from '$lib/components/Seo.svelte';
+	import { Toaster } from 'svelte-sonner';
 
 	let { children, data } = $props();
 
@@ -24,5 +25,5 @@
 	title="AI-Grapher"
 	description="AI-Grapher is a tool that helps you create beautiful product shots for your ecommerce store."
 />
-
+<Toaster richColors />
 {@render children()}
