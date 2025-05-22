@@ -41,14 +41,22 @@ The supabase url and anon key will be displayed in the terminal.
 
 2. Edit the schema in the `supabase/schema/` directory. This can be by editing an existing sql file or creating a new one for a new table e.g `supabase/schema/photos.sql`.
 
+    > Note: Make sure to add the enums to the `supabase/schema/enums.sql` file and the seeds to the `supabase/seeds/` directory.
+
+3. If you created a new sql file, add it to the `supabase/config.toml` file.
+
+    > Note: Make sure to add the new schema to the `schema_paths` array, they are run from top to bottom, so make sure the new schema is after the enums and any other dependent schemas.
+
+4. Create a new migration
+
+
     ```bash
     pnpx supabase db diff -f "name-of-migration"
     ```
 
     This will create a new migration file in the `supabase/migrations/` directory.
 
-
-3. Apply the migrations
+5. Apply the migrations
 
     To apply the migrations, run the following command:
 

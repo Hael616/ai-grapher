@@ -9,11 +9,13 @@
 	--color-primary: #a78bfa; /* Soft violet (Violet 400) – fresh and light */
 	--color-primary-dark: #8b5cf6; /* Violet 500 – hover/active */
 	--color-on-primary: #ffffff; /* Text/icons on top of primary */
+	--color-primary-foreground: var(--color-on-primary);
 
 	/* SECONDARY COLORS – For optional/secondary actions */
 	--color-secondary: #5eead4; /* Teal 300 */
 	--color-secondary-dark: #2dd4bf; /* Teal 400 */
 	--color-on-secondary: #0f172a; /* Text on secondary */
+	--color-secondary-foreground: var(--color-on-secondary);
 
 	/* 
      * BACKGROUND COLORS 
@@ -54,9 +56,31 @@
 	--breakpoint-3xl: 120rem;
 }
 
+/* Dark theme variables */
+:root.dark {
+	--color-primary: #8b5cf6;
+	--color-primary-dark: #7c3aed;
+	--color-on-primary: #ffffff;
+	--color-primary-foreground: var(--color-on-primary);
+
+	--color-secondary: #2dd4bf;
+	--color-secondary-dark: #14b8a6;
+	--color-on-secondary: #ffffff;
+	--color-secondary-foreground: var(--color-on-secondary);
+
+	--color-background: #0f172a;
+	--color-surface: #1e293b;
+
+	--color-foreground: #f1f5f9;
+	--color-foreground-muted: #94a3b8;
+	--color-foreground-subtle: #64748b;
+
+	--color-border: #334155;
+}
+
 @layer base {
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground transition-colors duration-200;
 	}
 
 	h1,
@@ -100,11 +124,19 @@
 	}
 
 	.button-soft {
-		@apply bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors;
+		@apply bg-primary/10 text-primary hover:bg-primary/20;
 	}
 
 	.button-outline-soft {
-		@apply flex items-center gap-2 rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50;
+		@apply border-border text-foreground hover:bg-surface border;
+	}
+
+	.button-ghost {
+		@apply text-foreground-muted hover:bg-surface hover:text-foreground;
+	}
+
+	.button-danger {
+		@apply bg-error hover:bg-error/90 text-white;
 	}
 
 	/* Form Components */
@@ -117,7 +149,7 @@
 	}
 
 	.form-input {
-		@apply text-foreground w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors;
+		@apply text-foreground border-border bg-surface w-full rounded border px-3 py-2 text-sm shadow-sm transition-colors;
 	}
 
 	.form-input:focus {
@@ -125,15 +157,15 @@
 	}
 
 	.form-input:disabled {
-		@apply cursor-not-allowed bg-gray-50 opacity-50;
+		@apply bg-surface/50 cursor-not-allowed opacity-50;
 	}
 
 	.form-error {
-		@apply flex w-full items-center gap-3 rounded bg-red-100 p-3 text-sm text-red-800;
+		@apply bg-error/10 text-error flex w-full items-center gap-3 rounded p-3 text-sm;
 	}
 
 	.form-success {
-		@apply flex w-full items-center gap-3 rounded bg-green-100 p-3 text-sm text-green-800;
+		@apply bg-success/10 text-success flex w-full items-center gap-3 rounded p-3 text-sm;
 	}
 
 	.form-hint {
@@ -146,16 +178,16 @@
 
 	.form-divider::before,
 	.form-divider::after {
-		@apply h-px flex-1 bg-gray-200 content-[''];
+		@apply bg-border h-px flex-1 content-[''];
 	}
 
 	/* Layout Components */
 	.page-container {
-		@apply flex min-h-screen items-center justify-center bg-gray-50 p-4;
+		@apply bg-background flex min-h-screen items-center justify-center p-4;
 	}
 
 	.card {
-		@apply w-full rounded-lg bg-white p-8 shadow-md;
+		@apply bg-surface w-full rounded-lg p-8 shadow-md;
 	}
 
 	.card-sm {
@@ -172,19 +204,19 @@
 	}
 
 	.icon-circle-error {
-		@apply bg-red-100;
+		@apply bg-error/10;
 	}
 
 	.icon-circle-success {
-		@apply bg-green-100;
+		@apply bg-success/10;
 	}
 
 	.icon-circle-warning {
-		@apply bg-yellow-100;
+		@apply bg-warning/10;
 	}
 
 	.icon-circle-info {
-		@apply bg-blue-100;
+		@apply bg-info/10;
 	}
 
 	/* Action Components */

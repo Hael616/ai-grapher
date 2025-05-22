@@ -69,7 +69,6 @@
 
 		// For social providers, handle differently
 		if (flow === 'google' || flow === 'github') {
-			// This would call Supabase's social auth
 			handleSocialWithSupabase(flow);
 			return ({ update }) => {
 				update();
@@ -94,13 +93,9 @@
 		};
 	};
 
-	// Handle authentication with Supabase (placeholder)
+	// Handle authentication with Supabase
 	const handleSocialWithSupabase = async (provider: AuthFlow) => {
 		try {
-			// Placeholder for Supabase integration
-			// In a real implementation, you would call Supabase here
-			console.log(`Authenticating with ${provider}`);
-
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: provider as Provider,
 				options: {
@@ -125,135 +120,127 @@
 	const actionUrl = title === 'Sign in' ? '/auth/signup' : '/auth/login';
 </script>
 
-<div class="page-container">
-	<form
-		id="form-{uid}"
-		class={twMerge('md:card md:card-sm', theme.form)}
-		method="POST"
-		autocomplete="off"
-		use:enhance={handleSubmit}
-		aria-label={`${title} form`}
-	>
-		<div class="card-content">
-			<h1 class="heading-xl">{title}</h1>
-			{#if showDescription}
-				<p class="text-subtle">
-					{#if description}
-						{description}
-					{:else if flow === 'password' || flow === 'magic-link'}
-						{flow === 'password'
-							? `${title} with email and password`
-							: `${title} via magic link with your email`}
-					{:else}
-						{title} with {flow}
+<div class="flex min-h-screen items-center justify-center p-4">
+	<div class="w-full max-w-md">
+		<form
+			id="form-{uid}"
+			class={twMerge('card', theme.form)}
+			method="POST"
+			autocomplete="off"
+			use:enhance={handleSubmit}
+			aria-label={`${title} form`}
+		>
+			<div class="space-y-6">
+				<div class="text-center">
+					<h1 class="text-foreground text-2xl font-bold tracking-tight">{title}</h1>
+					{#if showDescription}
+						<p class="text-foreground-muted mt-2 text-sm">
+							{#if description}
+								{description}
+							{:else if flow === 'password' || flow === 'magic-link'}
+								{flow === 'password'
+									? `${title} with email and password`
+									: `${title} via magic link with your email`}
+							{:else}
+								{title} with {flow}
+							{/if}
+						</p>
 					{/if}
-				</p>
-			{/if}
-
-			{#if errorMessage}
-				<div class="form-error">
-					<div class="icon-circle-error h-8 w-8">
-						<iconify-icon icon="mdi:alert-circle" width="20" height="20" class="text-red-600"
-						></iconify-icon>
-					</div>
-					<p class="m-0 text-red-800">{errorMessage}</p>
 				</div>
-			{/if}
 
-			{#if successMessage}
-				<div
-					class="flex w-full items-center gap-3 rounded bg-green-100 p-3 text-sm text-green-800"
-					role="status"
-					transition:slide
-				>
-					<div class="icon-circle-success h-8 w-8">
-						<iconify-icon icon="mdi:check-circle" width="20" height="20" class="text-green-600"
-						></iconify-icon>
+				{#if errorMessage}
+					<div class="form-error">
+						<div class="flex items-center gap-3">
+							<iconify-icon icon="mdi:alert-circle" width="20" height="20" class="text-error" />
+							<p class="text-sm">{errorMessage}</p>
+						</div>
 					</div>
-					<p class="m-0 text-green-800">{successMessage}</p>
-				</div>
-			{/if}
-
-			<div class={twMerge('w-full space-y-4', theme.fields)}>
-				{@render children()}
-			</div>
-
-			<div class="flex w-full flex-col items-center gap-4">
-				<!-- Regular form submit button for password/magic-link flow -->
-				{#if flow === 'password' || flow === 'magic-link' || flow === 'forgot-password' || flow === 'reset-password'}
-					<button
-						type="submit"
-						class={twMerge('button-soft button w-full', theme.submitButton)}
-						disabled={loading}
-						aria-busy={loading}
-					>
-						{#if loading}
-							<span class="flex items-center justify-center">
-								<span class="sr-only">Loading</span>
-								<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24"
-								></iconify-icon>
-							</span>
-						{:else}
-							{flow.includes('password') ? 'Sign in' : 'Send magic link'}
-						{/if}
-					</button>
-
-					{#if flow === 'magic-link'}
-						<p class="form-hint">We'll send you a magic link to sign in password-free</p>
-					{/if}
-
-					{#if showExtras}
-						<button
-							type="button"
-							class="text-subtle hover:text-foreground cursor-pointer border-none bg-transparent p-0 hover:underline"
-							onclick={() => changeAuthMethod(flow === 'password' ? 'magic-link' : 'password')}
-						>
-							{flow === 'password' ? `${title} with magic link instead` : `${title} with password`}
-						</button>
-					{/if}
 				{/if}
 
-				{#if showSocials && socialProviders.length > 0}
-					<div class="my-4 flex w-full items-center gap-3">
-						<div class="h-px flex-1 bg-gray-200"></div>
-						<div class="form-divider">
-							<span class="text-subtle">or</span>
+				{#if successMessage}
+					<div class="form-success" role="status" transition:slide>
+						<div class="flex items-center gap-3">
+							<iconify-icon icon="mdi:check-circle" width="20" height="20" class="text-success" />
+							<p class="text-sm">{successMessage}</p>
 						</div>
-						<div class="h-px flex-1 bg-gray-200"></div>
 					</div>
+				{/if}
 
-					<div class="actions-group w-full justify-center">
-						{#each socialProviders as provider}
+				<div class={twMerge('space-y-4', theme.fields)}>
+					{@render children()}
+				</div>
+
+				<div class="space-y-4">
+					{#if flow === 'password' || flow === 'magic-link' || flow === 'forgot-password' || flow === 'reset-password'}
+						<button
+							type="submit"
+							class={twMerge('button button-primary w-full', theme.submitButton)}
+							disabled={loading}
+							aria-busy={loading}
+						>
+							{#if loading}
+								<span class="flex items-center justify-center">
+									<span class="sr-only">Loading</span>
+									<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24" />
+								</span>
+							{:else}
+								{flow.includes('password') ? 'Sign in' : 'Send magic link'}
+							{/if}
+						</button>
+
+						{#if flow === 'magic-link'}
+							<p class="text-foreground-muted text-center text-sm">
+								We'll send you a magic link to sign in password-free
+							</p>
+						{/if}
+
+						{#if showExtras}
 							<button
 								type="button"
-								class={twMerge(
-									'button-outline-soft button',
-									socialProviders.length > 1 ? 'w-fit' : 'w-full',
-									theme.socialButton
-								)}
-								onclick={() => changeAuthMethod(provider as AuthFlow)}
-								disabled={loading}
+								class="button button-ghost w-full"
+								onclick={() => changeAuthMethod(flow === 'password' ? 'magic-link' : 'password')}
 							>
-								<iconify-icon icon="mdi:{provider}" width="20" height="20"></iconify-icon>
-								<span class={socialProviders.length > 1 ? 'sr-only' : ''}
-									>Continue with {provider.charAt(0).toUpperCase() + provider.slice(1)}</span
-								>
+								{flow === 'password'
+									? `${title} with magic link instead`
+									: `${title} with password`}
 							</button>
-						{/each}
-					</div>
-				{/if}
+						{/if}
+					{/if}
 
-				{#if extras}
-					{@render extras()}
-				{:else if showExtras}
-					<div class="mt-4 flex flex-col items-center gap-2">
-						<span class="text-subtle">or</span>
-						<a href={actionUrl} class="text-subtle hover:text-foreground hover:underline"
-							>{actionText}</a
-						>
-					</div>
-				{/if}
+					{#if showSocials && socialProviders.length > 0}
+						<div class="form-divider">
+							<span class="text-foreground-muted text-sm">or</span>
+						</div>
+
+						<div class="grid gap-3">
+							{#each socialProviders as provider}
+								<button
+									type="button"
+									class={twMerge('button button-outline-soft', theme.socialButton)}
+									onclick={() => changeAuthMethod(provider as AuthFlow)}
+									disabled={loading}
+								>
+									<iconify-icon icon="mdi:{provider}" width="20" height="20"></iconify-icon>
+									<span>Continue with {provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
+								</button>
+							{/each}
+						</div>
+					{/if}
+
+					{#if extras}
+						{@render extras()}
+					{:else if showExtras}
+						<div class="text-center">
+							<p class="text-foreground-muted text-sm">
+								Don't have an account?
+								<a href={actionUrl} class="text-primary hover:text-primary/90 font-medium">
+									{actionText}
+								</a>
+							</p>
+						</div>
+					{/if}
+				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>

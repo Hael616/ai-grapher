@@ -32,8 +32,8 @@
 	const errorStyle = 'form-input-error';
 </script>
 
-<div class={twMerge('mt-5 grid w-full gap-1.5', containerClass)} transition:slide>
-	<label for="{name}-{uid}" class={twMerge('form-label text-left', labelClass)}>
+<div class={twMerge('form-group', containerClass)} transition:slide>
+	<label for="{name}-{uid}" class={twMerge('form-label', labelClass)}>
 		{label}{restProps.required ? ' *' : ''}
 	</label>
 
@@ -45,7 +45,7 @@
 				type={showPassword ? 'text' : 'password'}
 				bind:value
 				{...restProps}
-				class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
+				class={twMerge(baseStyle, errors.length > 0 ? errorStyle : '', inputClass)}
 				aria-invalid={errors.length > 0}
 				aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 			/>
@@ -70,7 +70,7 @@
 			bind:value
 			rows="5"
 			{...restProps}
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : '', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		></textarea>
@@ -79,7 +79,7 @@
 			{name}
 			id="{name}-{uid}"
 			bind:value
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : '', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		>
@@ -94,19 +94,14 @@
 			id="{name}-{uid}"
 			bind:value
 			{...restProps}
-			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : 'border-border', inputClass)}
+			class={twMerge(baseStyle, errors.length > 0 ? errorStyle : '', inputClass)}
 			aria-invalid={errors.length > 0}
 			aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
 		/>
 	{/if}
 
 	{#if errors.length > 0}
-		<div
-			class={twMerge('text-error mt-1 grid gap-1 text-sm', errorClass)}
-			id="{name}-error"
-			role="alert"
-			transition:slide
-		>
+		<div class={twMerge('form-error', errorClass)} id="{name}-error" role="alert" transition:slide>
 			{#each errors as error}
 				<span>{error}</span>
 			{/each}
@@ -114,7 +109,9 @@
 	{/if}
 
 	{#if name === 'password' && page.route.id?.includes('/login')}
-		<a href="forgot-password" class="text-foreground-muted text-right text-sm underline"
+		<a
+			href="forgot-password"
+			class="text-foreground-muted hover:text-foreground text-right text-sm underline"
 			>forgot password?</a
 		>
 	{/if}

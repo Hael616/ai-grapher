@@ -61,31 +61,32 @@
 					width="20"
 					height="20"
 				></iconify-icon>
-				<span>{productTypes.find((t) => t.id === selectedType)?.label}</span>
+				<span class="text-foreground">{productTypes.find((t) => t.id === selectedType)?.label}</span
+				>
 			{:else}
-				<span>Select product type</span>
+				<span class="text-foreground-muted">Select product type</span>
 			{/if}
 		</div>
 		<iconify-icon
 			icon="mdi:chevron-down"
 			width="20"
 			height="20"
-			class="transition-transform duration-200"
+			class="text-foreground-muted transition-transform duration-200"
 			style="transform: rotate({isOpen ? '180deg' : '0deg'})"
 		></iconify-icon>
 	</button>
 
 	{#if isOpen}
 		<div
-			class="absolute top-full right-0 left-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border bg-white shadow-lg"
+			class="bg-surface absolute top-full right-0 left-0 z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border shadow-lg"
 			transition:slide={{ duration: 200 }}
 		>
 			{#each productTypes as type}
 				<button
-					class="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-50 {selectedType ===
+					class="hover:bg-surface-hover flex w-full items-center gap-2 px-4 py-2 text-left {selectedType ===
 					type.id
 						? 'bg-primary/5 text-primary'
-						: 'text-gray-700'}"
+						: 'text-foreground'}"
 					on:click={() => handleSelect(type.id)}
 				>
 					<iconify-icon icon={type.icon} width="20" height="20"></iconify-icon>

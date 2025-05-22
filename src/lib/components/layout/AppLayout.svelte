@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { twMerge } from 'tailwind-merge';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	import { layoutStore } from './layout.svelte';
-	import { createBrowserClient } from '@supabase/ssr';
-	import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
-	import supabase from '../../supabase';
-	import { trace, warn } from '../../utils/logger';
+	import { trace, warn } from '$lib/utils/logger';
 	import { goto } from '$app/navigation';
 
-	// Props
+	const { supabase } = page.data;
+
 	let {
 		showSidebar = true,
 		sidebarItems = [],
@@ -40,17 +39,14 @@
 		return () => window.removeEventListener('resize', checkMobile);
 	});
 
-	// Toggle sidebar
 	const toggleSidebar = () => {
 		isSidebarOpen = !isSidebarOpen;
 	};
 
-	// Toggle user menu
 	const toggleUserMenu = () => {
 		isUserMenuOpen = !isUserMenuOpen;
 	};
 
-	// Close user menu when clicking outside
 	const handleClickOutside = (event: MouseEvent) => {
 		const target = event.target as HTMLElement;
 		if (!target.closest('.user-menu')) {
@@ -65,7 +61,6 @@
 
 	let signOutLoading = $state(false);
 
-	// Handle sign out
 	const handleSignOut = async () => {
 		signOutLoading = true;
 		const { error } = await supabase.auth.signOut();
@@ -79,26 +74,26 @@
 	};
 </script>
 
-<div class="flex h-screen bg-gray-50">
+<div class="bg-background flex h-screen">
 	<!-- Sidebar -->
 	{#if showSidebar}
 		<aside
 			class={twMerge(
-				'fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
+				'bg-surface fixed inset-y-0 left-0 z-50 flex w-64 flex-col shadow-lg transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
 				isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
 				sidebar
 			)}
 		>
 			<!-- Sidebar Header -->
-			<div class="flex h-16 items-center justify-between border-b px-4">
+			<div class="border-border flex h-16 items-center justify-between border-b px-4">
 				<a href="/app" class="flex items-center gap-2">
 					<!-- TODO: Add logo -->
 					<iconify-icon icon="mdi:chart-box" width="24" height="24" class="text-primary flex"
 					></iconify-icon>
-					<span class="text-lg font-semibold">AI Grapher</span>
+					<span class="text-foreground text-lg font-semibold">AI Grapher</span>
 				</a>
 				<button
-					class="rounded p-2 hover:bg-gray-100 md:hidden"
+					class="hover:bg-surface-hover rounded p-2 md:hidden"
 					onclick={toggleSidebar}
 					aria-label="Close sidebar"
 				>
@@ -113,9 +108,13 @@
 						href={item.href}
 						class={twMerge(
 							'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-							$page.url.pathname === item.href
+							(
+								item.href === '/app'
+									? page.url.pathname === '/app'
+									: page.url.pathname.startsWith(item.href) && page.url.pathname !== '/app'
+							)
 								? 'bg-primary/10 text-primary'
-								: 'text-gray-600 hover:bg-gray-100'
+								: 'text-foreground-muted hover:bg-surface-hover'
 						)}
 					>
 						<iconify-icon icon={item.icon} width="20" height="20"></iconify-icon>
@@ -125,15 +124,15 @@
 			</nav>
 
 			<!-- Sidebar Footer -->
-			<div class="border-t p-4">
+			<div class="border-border border-t p-4">
 				<div class="user-menu relative">
 					<button
-						class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-gray-100"
+						class="hover:bg-surface-hover flex w-full items-center gap-3 rounded-lg px-2 py-1.5"
 						onclick={toggleUserMenu}
 						aria-expanded={isUserMenuOpen}
 						aria-haspopup="true"
 					>
-						<div class="h-8 w-8 rounded-full bg-gray-200">
+						<div class="bg-surface-hover h-8 w-8 rounded-full">
 							{#if user}
 								<img
 									src={user?.user_metadata?.avatar_url}
@@ -144,15 +143,15 @@
 						</div>
 						<div class="flex-1 text-left">
 							{#if user}
-								<p class="text-sm font-medium">{user?.user_metadata?.full_name}</p>
-								<p class="text-xs text-gray-500">{user?.email}</p>
+								<p class="text-foreground text-sm font-medium">{user?.user_metadata?.full_name}</p>
+								<p class="text-foreground-muted text-xs">{user?.email}</p>
 							{/if}
 						</div>
 						<iconify-icon
 							icon="mdi:chevron-down"
 							width="20"
 							height="20"
-							class="text-gray-500 transition-transform duration-200"
+							class="text-foreground-muted transition-transform duration-200"
 							style="transform: rotate({isUserMenuOpen ? '180deg' : '0deg'})"
 						></iconify-icon>
 					</button>
@@ -170,7 +169,7 @@
 								<iconify-icon icon="mdi:cog" width="20" height="20"></iconify-icon>
 								Settings
 							</a>
-							<div class="border-t"></div>
+							<div class="border-border border-t"></div>
 
 							<button
 								class="button button-outline-soft text-error h-full w-full justify-start p-4"
@@ -192,39 +191,36 @@
 		<!-- Top Header -->
 		<header
 			class={twMerge(
-				'flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm',
+				'border-border bg-surface flex h-16 items-center justify-between border-b px-4 shadow-sm',
 				header
 			)}
 		>
 			<div class="flex items-center gap-4">
 				{#if showSidebar}
 					<button
-						class="rounded p-2 hover:bg-gray-100 md:hidden"
+						class="hover:bg-surface-hover rounded p-2 md:hidden"
 						onclick={toggleSidebar}
 						aria-label="Open sidebar"
 					>
 						<iconify-icon icon="mdi:menu" class="flex" width="20" height="20"></iconify-icon>
 					</button>
 				{/if}
-				<h1 class="text-lg font-semibold">{layoutStore.pageTitle}</h1>
+				<h1 class="text-foreground text-lg font-semibold">{layoutStore.pageTitle}</h1>
 			</div>
 
 			<div class="flex items-center gap-4">
-				<!-- <button class="rounded p-2 hover:bg-gray-100" aria-label="Notifications">
+				<ThemeToggle />
+				<!-- <button class="rounded p-2 hover:bg-surface-hover" aria-label="Notifications">
 					<iconify-icon icon="mdi:bell-outline" width="20" height="20"></iconify-icon>
 				</button>
-				<button class="rounded p-2 hover:bg-gray-100" aria-label="Settings">
+				<button class="rounded p-2 hover:bg-surface-hover" aria-label="Settings">
 					<iconify-icon icon="mdi:cog-outline" width="20" height="20"></iconify-icon>
 				</button> -->
-				<a href="/app/generate" class="button button-outline-soft">
-					<iconify-icon icon="mdi:plus" width="20" height="20"></iconify-icon>
-					<span class="sr-only">Generate</span>
-				</a>
 			</div>
 		</header>
 
 		<!-- Main Content Area -->
-		<main class={twMerge('flex-1 overflow-y-auto p-4', main)}>
+		<main class={twMerge('bg-background flex-1 overflow-y-auto p-4', main)}>
 			<div class={twMerge('mx-auto max-w-7xl', content)}>
 				{#if loading}
 					<div class="flex h-full items-center justify-center">
@@ -235,7 +231,7 @@
 								height="48"
 								class="text-primary"
 							></iconify-icon>
-							<p class="mt-4 text-gray-600">Loading...</p>
+							<p class="text-foreground-muted mt-4">Loading...</p>
 						</div>
 					</div>
 				{:else}
@@ -254,6 +250,5 @@
 		onkeydown={(e) => e.key === 'Enter' && toggleSidebar()}
 		role="button"
 		tabindex="0"
-		aria-label="Close sidebar"
 	></div>
 {/if}
