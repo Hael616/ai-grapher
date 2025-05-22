@@ -49,9 +49,16 @@
 				{#each steps as step, i}
 					<div
 						class="group relative cursor-pointer"
-						on:click={() => setActiveStep(i)}
-						on:mouseenter={() => setActiveStep(i)}
+						onclick={() => setActiveStep(i)}
+						onmouseenter={() => setActiveStep(i)}
 						in:fly={{ y: 50, duration: 800, delay: i * 200 }}
+						onkeydown={(e) => {
+							if (e.key === 'Enter') {
+								setActiveStep(i);
+							}
+						}}
+						role="button"
+						tabindex="0"
 					>
 						<div
 							class="bg-primary/10 group-hover:bg-primary/20 mb-6 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110"
