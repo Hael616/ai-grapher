@@ -6,6 +6,10 @@ const createStore = () => {
       return pageTitle;
     },
 
+    set pageTitle(newTitle: string) {
+      pageTitle = newTitle;
+    },
+
     setPageTitle(newTitle: string) {
       pageTitle = newTitle;
     },

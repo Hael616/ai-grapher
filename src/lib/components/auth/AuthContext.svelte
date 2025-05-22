@@ -7,9 +7,9 @@
 	import { twMerge } from 'tailwind-merge';
 	import type { AuthContextProps, AuthFlow } from './utils';
 	import type { Provider } from '@supabase/supabase-js';
-	import { createBrowserClient } from '@supabase/ssr';
-	import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
-	import { debug, warn } from '../../utils/logger';
+	import { warn } from '$lib/utils/logger';
+
+	const { supabase } = page.data;
 
 	// Props with defaults
 	let {
@@ -100,7 +100,6 @@
 			// Placeholder for Supabase integration
 			// In a real implementation, you would call Supabase here
 			console.log(`Authenticating with ${provider}`);
-			const supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
 
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: provider as Provider,
