@@ -88,6 +88,65 @@ export type Database = {
           },
         ]
       }
+      models: {
+        Row: {
+          created_at: string
+          id: string
+          model_url: string | null
+          model_version: string | null
+          notes: string | null
+          num_images: number | null
+          project_id: string | null
+          training_completed_at: string | null
+          training_data_url: string
+          training_started_at: string | null
+          training_status:
+            | Database["public"]["Enums"]["training_status_type"]
+            | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          model_url?: string | null
+          model_version?: string | null
+          notes?: string | null
+          num_images?: number | null
+          project_id?: string | null
+          training_completed_at?: string | null
+          training_data_url: string
+          training_started_at?: string | null
+          training_status?:
+            | Database["public"]["Enums"]["training_status_type"]
+            | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model_url?: string | null
+          model_version?: string | null
+          notes?: string | null
+          num_images?: number | null
+          project_id?: string | null
+          training_completed_at?: string | null
+          training_data_url?: string
+          training_started_at?: string | null
+          training_status?:
+            | Database["public"]["Enums"]["training_status_type"]
+            | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "models_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           created_at: string
@@ -130,7 +189,6 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          model_status: Database["public"]["Enums"]["model_status_type"]
           name: string
           user_id: string
         }
@@ -139,7 +197,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          model_status: Database["public"]["Enums"]["model_status_type"]
           name: string
           user_id: string
         }
@@ -148,7 +205,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          model_status?: Database["public"]["Enums"]["model_status_type"]
           name?: string
           user_id?: string
         }
@@ -163,15 +219,15 @@ export type Database = {
     }
     Enums: {
       generation_status_type: "pending" | "success" | "failed"
-      model_status_type:
+      model_support_type: "none" | "basic" | "full"
+      resolution_type: "720p" | "1080p" | "4k"
+      scene_type_type: "studio" | "lifestyle" | "modeling"
+      training_status_type:
         | "not_started"
         | "training"
         | "ready"
         | "pending"
         | "failed"
-      model_support_type: "none" | "basic" | "full"
-      resolution_type: "720p" | "1080p" | "4k"
-      scene_type_type: "studio" | "lifestyle" | "modeling"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -291,16 +347,16 @@ export const Constants = {
   public: {
     Enums: {
       generation_status_type: ["pending", "success", "failed"],
-      model_status_type: [
+      model_support_type: ["none", "basic", "full"],
+      resolution_type: ["720p", "1080p", "4k"],
+      scene_type_type: ["studio", "lifestyle", "modeling"],
+      training_status_type: [
         "not_started",
         "training",
         "ready",
         "pending",
         "failed",
       ],
-      model_support_type: ["none", "basic", "full"],
-      resolution_type: ["720p", "1080p", "4k"],
-      scene_type_type: ["studio", "lifestyle", "modeling"],
     },
   },
 } as const
