@@ -17,8 +17,8 @@
 	let selectedFiles: File[] = $state([]);
 	let errors = $state<Record<string, string>>({});
 
-	const handleFileSelect = (event: CustomEvent<File[]>) => {
-		selectedFiles = event.detail;
+	const handleFileSelect = (event: File[]) => {
+		selectedFiles = event;
 		errors = {};
 	};
 
@@ -71,22 +71,22 @@
 
 <div class="mx-auto max-w-3xl space-y-6" in:fade={{ duration: 300 }}>
 	<!-- Progress Steps -->
-	<div class="flex items-center justify-between">
+	<div class="relative flex items-center justify-between">
 		{#each Array(totalSteps) as _, i}
 			<div class="flex items-center">
-				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 {currentStep >
-					i + 1
-						? 'bg-primary text-primary-foreground'
-						: currentStep === i + 1
-							? 'border-primary text-primary border-2'
-							: 'border-2 border-gray-300 text-gray-300'}"
+				<button
+					disabled={currentStep <= i + 1}
+					onclick={() => (currentStep = i + 1)}
+					class="{currentStep > i + 1
+						? 'bg-primary border-primary text-primary-foreground'
+						: 'bg-surface'} relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 disabled:cursor-not-allowed {currentStep ===
+						i + 1 && 'border-primary'} "
 				>
 					{i + 1}
-				</div>
+				</button>
 				{#if i < totalSteps - 1}
 					<div
-						class="h-0.5 w-24 transition-colors duration-300 {currentStep > i + 1
+						class="absolute left-0 h-0.5 w-full {currentStep > i + 1
 							? 'bg-primary'
 							: 'bg-gray-300'}"
 					></div>
@@ -108,17 +108,19 @@
 			<div class="space-y-4">
 				<FileUpload
 					maxFiles={30}
-					minFiles={15}
+					minFiles={4}
 					title="Upload 15-30 product images"
 					subtitle="Upload high-quality images of your product from different angles. Supported: JPG, PNG. Transparent background recommended."
 					aspectRatio="aspect-square"
-					on:files={handleFileSelect}
+					bind:images={selectedFiles}
+					onselect={handleFileSelect}
 				/>
-				<div class="text-center text-sm text-gray-500">
-					{selectedFiles.length} images selected (min: 15, max: 30)
-				</div>
 				{#if errors.files}
 					<p class="text-sm text-red-600">{errors.files}</p>
+				{:else}
+					<div class="text-center text-sm text-gray-500">
+						{selectedFiles?.length} images selected (min: 15, max: 30)
+					</div>
 				{/if}
 			</div>
 
@@ -184,7 +186,7 @@
 				<button
 					class="button button-primary"
 					onclick={handleNext}
-					disabled={selectedFiles.length < 15 || selectedFiles.length > 30}
+					disabled={selectedFiles.length < 4 || selectedFiles.length > 30}
 				>
 					Next Step
 					<iconify-icon icon="mdi:arrow-right" width="20" height="20"></iconify-icon>

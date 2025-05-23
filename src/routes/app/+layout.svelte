@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import AppLayout from '$lib/components/layout/AppLayout.svelte';
 	import type { SidebarItem } from '$lib/components/layout/types';
+	import { projectsStore } from '$stores';
 
 	let { children, data } = $props();
 

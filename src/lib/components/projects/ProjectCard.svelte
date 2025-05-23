@@ -1,16 +1,9 @@
 <script lang="ts">
 	import { showToast } from '$lib/utils/toast';
 	import { toast } from 'svelte-sonner';
+	import type { Tables } from '$lib/types/database.types';
 
-	export let project: {
-		id: string;
-		name: string;
-		description: string;
-		cover_image_url: string;
-		model_status: string;
-		created_at: string;
-		generation_count: number;
-	};
+	let { project } = $props<{ project: Tables<'projects'> }>();
 
 	// Helper function to get status color and icon
 	function getStatusInfo(status: string) {

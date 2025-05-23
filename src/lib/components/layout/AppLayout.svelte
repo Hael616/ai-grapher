@@ -127,12 +127,12 @@
 			<div class="border-border border-t p-4">
 				<div class="user-menu relative">
 					<button
-						class="hover:bg-surface-hover flex w-full items-center gap-3 rounded-lg px-2 py-1.5"
+						class="hover:bg-surface-hover flex h-full w-full items-center gap-2 rounded-lg px-2 py-1.5"
 						onclick={toggleUserMenu}
 						aria-expanded={isUserMenuOpen}
 						aria-haspopup="true"
 					>
-						<div class="bg-surface-hover h-8 w-8 rounded-full">
+						<div class="bg-surface-hover h-8 w-8 items-center justify-center rounded-full">
 							{#if user}
 								<img
 									src={user?.user_metadata?.avatar_url}
@@ -141,7 +141,7 @@
 								/>
 							{/if}
 						</div>
-						<div class="flex-1 text-left">
+						<div class=" text-left">
 							{#if user}
 								<p class="text-foreground text-sm font-medium">{user?.user_metadata?.full_name}</p>
 								<p class="text-foreground-muted text-xs">{user?.email}</p>

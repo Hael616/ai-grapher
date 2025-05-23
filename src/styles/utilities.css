@@ -1,0 +1,3 @@
+@utility sr-only {
+	@apply absolute h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap;
+}

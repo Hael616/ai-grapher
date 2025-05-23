@@ -1,18 +1,14 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	const {
 		maxFiles = 3,
 		acceptedFileTypes = ['image/jpeg', 'image/png'],
 		minFiles = 0,
 		title = 'Drag & drop or click to upload',
 		subtitle = 'Upload images. Supported: JPG, PNG. Transparent background recommended.',
-		aspectRatio = 'aspect-video'
+		aspectRatio = 'aspect-video',
+		images = $bindable([]),
+		onselect = () => {}
 	} = $props();
-
-	const dispatch = createEventDispatcher<{
-		files: File[];
-	}>();
 
 	let isDragging = $state(false);
 	let files: File[] = $state([]);
@@ -56,19 +52,19 @@
 
 		const filesToAdd = newFiles.slice(0, remainingSlots);
 		files = [...files, ...filesToAdd];
-		previewUrls = files.map((file) => URL.createObjectURL(file));
-		dispatch('files', files);
+
+		onselect(files);
 	};
 
 	const removeFile = (e: Event, index: number) => {
 		e.preventDefault();
 		e.stopPropagation();
 		files = files.filter((_, i) => i !== index);
-		previewUrls = previewUrls.filter((_, i) => i !== index);
+
 		if (currentIndex >= files.length) {
 			currentIndex = Math.max(0, files.length - 1);
 		}
-		dispatch('files', files);
+		onselect(files);
 	};
 
 	const setCurrentIndex = (e: Event, index: number) => {
@@ -76,6 +72,13 @@
 		e.stopPropagation();
 		currentIndex = index;
 	};
+
+	$effect(() => {
+		if (images && images.length > 0) {
+			files = images;
+			previewUrls = images.map((image) => URL.createObjectURL(image));
+		}
+	});
 </script>
 
 <div

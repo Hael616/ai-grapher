@@ -6,6 +6,8 @@
 	import Seo from '$lib/components/Seo.svelte';
 	import { Toaster } from 'svelte-sonner';
 
+	import { projectsStore } from '$stores';
+
 	let { children, data } = $props();
 
 	let { session, supabase } = $state(data);
