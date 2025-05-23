@@ -151,7 +151,8 @@
 				{#if errorMessage}
 					<div class="form-error">
 						<div class="flex items-center gap-3">
-							<iconify-icon icon="mdi:alert-circle" width="20" height="20" class="text-error" />
+							<iconify-icon icon="mdi:alert-circle" width="20" height="20" class="text-error"
+							></iconify-icon>
 							<p class="text-sm">{errorMessage}</p>
 						</div>
 					</div>
@@ -160,7 +161,8 @@
 				{#if successMessage}
 					<div class="form-success" role="status" transition:slide>
 						<div class="flex items-center gap-3">
-							<iconify-icon icon="mdi:check-circle" width="20" height="20" class="text-success" />
+							<iconify-icon icon="mdi:check-circle" width="20" height="20" class="text-success"
+							></iconify-icon>
 							<p class="text-sm">{successMessage}</p>
 						</div>
 					</div>
@@ -181,7 +183,8 @@
 							{#if loading}
 								<span class="flex items-center justify-center">
 									<span class="sr-only">Loading</span>
-									<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24" />
+									<iconify-icon icon="svg-spinners:blocks-shuffle-2" width="24" height="24"
+									></iconify-icon>
 								</span>
 							{:else}
 								{flow.includes('password') ? 'Sign in' : 'Send magic link'}

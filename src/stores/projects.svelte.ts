@@ -1,4 +1,4 @@
-import type { Database, Tables } from "$lib/types/database.types";
+import type { Database, Tables, TablesInsert } from "$lib/types/database.types";
 import { trace, warn } from "$lib/utils/logger";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -58,6 +58,33 @@ class ProjectsStore {
     this.loaded = true;
     this.loading = false;
     this.loadLocked = false;
+  }
+
+  public async createProject(
+    project: Omit<
+      TablesInsert<"projects">,
+      "user_id" | "model_status" | "cover_image_url"
+    >,
+  ) {
+    if (!this.supabase) {
+      warn("Supabase not found, cannot create project");
+      return;
+    }
+
+    const { data, error } = await this.supabase
+      .from("projects")
+      .insert(project)
+      .select()
+      .single();
+
+    if (error) {
+      trace("Error creating project", error);
+      return null;
+    }
+
+    this.projects[data.id] = data;
+
+    return data;
   }
 }
 

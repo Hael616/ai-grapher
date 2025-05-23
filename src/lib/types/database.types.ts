@@ -163,7 +163,12 @@ export type Database = {
     }
     Enums: {
       generation_status_type: "pending" | "success" | "failed"
-      model_status_type: "not_started" | "training" | "ready"
+      model_status_type:
+        | "not_started"
+        | "training"
+        | "ready"
+        | "pending"
+        | "failed"
       model_support_type: "none" | "basic" | "full"
       resolution_type: "720p" | "1080p" | "4k"
       scene_type_type: "studio" | "lifestyle" | "modeling"
@@ -286,7 +291,13 @@ export const Constants = {
   public: {
     Enums: {
       generation_status_type: ["pending", "success", "failed"],
-      model_status_type: ["not_started", "training", "ready"],
+      model_status_type: [
+        "not_started",
+        "training",
+        "ready",
+        "pending",
+        "failed",
+      ],
       model_support_type: ["none", "basic", "full"],
       resolution_type: ["720p", "1080p", "4k"],
       scene_type_type: ["studio", "lifestyle", "modeling"],

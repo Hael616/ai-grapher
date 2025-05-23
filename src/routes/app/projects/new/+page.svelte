@@ -3,51 +3,49 @@
 	import { goto } from '$app/navigation';
 	import { showToast } from '$lib/utils/toast';
 	import FileUpload from '$lib/components/generate/FileUpload.svelte';
+	import { fade, fly } from 'svelte/transition';
+	import Input from '$lib/components/Input.svelte';
 
-	// Set page title
 	layoutStore.pageTitle = 'Create New Project';
 
 	let currentStep = $state(1);
 	let totalSteps = 2;
 	let isSubmitting = $state(false);
 
-	// Form data
 	let projectName = $state('');
 	let projectDescription = $state('');
 	let selectedFiles: File[] = $state([]);
+	let errors = $state<Record<string, string>>({});
 
 	const handleFileSelect = (event: CustomEvent<File[]>) => {
 		selectedFiles = event.detail;
+		errors = {};
 	};
 
 	const handleNext = () => {
-		if (currentStep === 1 && selectedFiles.length < 15) {
-			showToast({
-				message: 'Please upload at least 15 images',
-				type: 'error'
-			});
-			return;
-		}
-		if (currentStep === 1 && selectedFiles.length > 30) {
-			showToast({
-				message: 'Please upload no more than 30 images',
-				type: 'error'
-			});
-			return;
+		errors = {};
+		if (currentStep === 1) {
+			if (selectedFiles.length < 15) {
+				errors.files = 'Please upload at least 15 images';
+				return;
+			}
+			if (selectedFiles.length > 30) {
+				errors.files = 'Please upload no more than 30 images';
+				return;
+			}
 		}
 		currentStep++;
 	};
 
 	const handleBack = () => {
+		errors = {};
 		currentStep--;
 	};
 
 	const handleSubmit = async () => {
+		errors = {};
 		if (!projectName.trim()) {
-			showToast({
-				message: 'Please enter a project name',
-				type: 'error'
-			});
+			errors.projectName = 'Please enter a project name';
 			return;
 		}
 
@@ -71,14 +69,15 @@
 	};
 </script>
 
-<div class="mx-auto max-w-3xl space-y-8">
+<div class="mx-auto max-w-3xl space-y-6" in:fade={{ duration: 300 }}>
 	<!-- Progress Steps -->
 	<div class="flex items-center justify-between">
 		{#each Array(totalSteps) as _, i}
 			<div class="flex items-center">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-full {currentStep > i + 1
-						? 'bg-primary text-white'
+					class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 {currentStep >
+					i + 1
+						? 'bg-primary text-primary-foreground'
 						: currentStep === i + 1
 							? 'border-primary text-primary border-2'
 							: 'border-2 border-gray-300 text-gray-300'}"
@@ -86,7 +85,11 @@
 					{i + 1}
 				</div>
 				{#if i < totalSteps - 1}
-					<div class="h-0.5 w-24 {currentStep > i + 1 ? 'bg-primary' : 'bg-gray-300'}"></div>
+					<div
+						class="h-0.5 w-24 transition-colors duration-300 {currentStep > i + 1
+							? 'bg-primary'
+							: 'bg-gray-300'}"
+					></div>
 				{/if}
 			</div>
 		{/each}
@@ -94,7 +97,7 @@
 
 	<!-- Step 1: Upload Images -->
 	{#if currentStep === 1}
-		<div class="space-y-6">
+		<div class="space-y-6" in:fly={{ y: 20, duration: 300 }}>
 			<div class="space-y-2 text-center">
 				<h1 class="text-2xl font-semibold">Upload Product Images</h1>
 				<p class="text-gray-600">
@@ -114,10 +117,13 @@
 				<div class="text-center text-sm text-gray-500">
 					{selectedFiles.length} images selected (min: 15, max: 30)
 				</div>
+				{#if errors.files}
+					<p class="text-sm text-red-600">{errors.files}</p>
+				{/if}
 			</div>
 
 			<!-- Image Examples Section -->
-			<div class="border-border bg-surface rounded-lg border p-6">
+			<div class="card">
 				<h2 class="mb-4 text-lg font-semibold">Image Examples</h2>
 				<div class="grid gap-6 md:grid-cols-2">
 					<!-- Good Examples -->
@@ -189,34 +195,34 @@
 
 	<!-- Step 2: Project Details -->
 	{#if currentStep === 2}
-		<div class="space-y-6">
+		<div class="space-y-6" in:fly={{ y: 20, duration: 300 }}>
 			<div class="space-y-2 text-center">
 				<h1 class="text-2xl font-semibold">Project Details</h1>
 				<p class="text-gray-600">Enter the details for your new project</p>
 			</div>
 
-			<div class="space-y-4">
-				<div class="space-y-2">
-					<label for="projectName" class="block text-sm font-medium">Project Name</label>
-					<input
+			<div class="card">
+				<div class="space-y-4">
+					<Input
+						name="projectName"
+						label="Project Name"
 						type="text"
 						id="projectName"
 						bind:value={projectName}
 						placeholder="Enter project name"
-						class="input w-full"
 						required
+						error={errors.projectName}
 					/>
-				</div>
 
-				<div class="space-y-2">
-					<label for="projectDescription" class="block text-sm font-medium">Description</label>
-					<textarea
+					<Input
+						name="projectDescription"
+						label="Description"
+						type="textarea"
 						id="projectDescription"
 						bind:value={projectDescription}
 						placeholder="Enter project description"
 						rows="4"
-						class="input w-full"
-					></textarea>
+					/>
 				</div>
 			</div>
 
@@ -244,7 +250,7 @@
 	{/if}
 
 	<!-- Tips Section -->
-	<div class="border-border bg-surface rounded-lg border p-4">
+	<div class="card">
 		<h2 class="mb-2 text-lg font-semibold">Tips</h2>
 		<ul class="list-inside list-disc space-y-1 text-sm text-gray-600">
 			<li>Use high-quality images with good lighting</li>
