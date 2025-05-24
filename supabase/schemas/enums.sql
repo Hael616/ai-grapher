@@ -5,7 +5,7 @@ CREATE TYPE model_support_type AS ENUM ('none', 'basic', 'full');
 CREATE TYPE resolution_type AS ENUM ('720p', '1080p', '4k');
 
 -- Training status types for models
-CREATE TYPE training_status_type AS ENUM ('not_started', 'training', 'ready', 'pending', 'failed');
+CREATE TYPE training_status_type AS ENUM ('not_started', 'training', 'ready', 'failed');
 
 -- Generation status types
 CREATE TYPE generation_status_type AS ENUM ('pending', 'success', 'failed');
