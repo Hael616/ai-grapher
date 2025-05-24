@@ -129,7 +129,7 @@ CREATE TABLE training (
     user_id UUID,
     training_data_id UUID,
     status training_status_type DEFAULT 'not_started',
-    training_started_at TIMESTAMP WITH TIME ZONE,
+    training_started_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
     training_completed_at TIMESTAMP WITH TIME ZONE,
     error_message TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL

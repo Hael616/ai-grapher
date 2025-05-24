@@ -92,54 +92,30 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          model_url: string | null
+          model_url: string
           model_version: string | null
-          notes: string | null
-          num_images: number | null
           project_id: string | null
-          training_completed_at: string | null
-          training_data_url: string
-          training_started_at: string | null
-          training_status:
-            | Database["public"]["Enums"]["training_status_type"]
-            | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
-          model_url?: string | null
+          model_url: string
           model_version?: string | null
-          notes?: string | null
-          num_images?: number | null
           project_id?: string | null
-          training_completed_at?: string | null
-          training_data_url: string
-          training_started_at?: string | null
-          training_status?:
-            | Database["public"]["Enums"]["training_status_type"]
-            | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
-          model_url?: string | null
+          model_url?: string
           model_version?: string | null
-          notes?: string | null
-          num_images?: number | null
           project_id?: string | null
-          training_completed_at?: string | null
-          training_data_url?: string
-          training_started_at?: string | null
-          training_status?:
-            | Database["public"]["Enums"]["training_status_type"]
-            | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "models_project_id_fkey"
+            foreignKeyName: "fk_models_project_id"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -187,6 +163,7 @@ export type Database = {
         Row: {
           cover_image_url: string | null
           created_at: string
+          current_model_id: string | null
           description: string | null
           id: string
           name: string
@@ -195,6 +172,7 @@ export type Database = {
         Insert: {
           cover_image_url?: string | null
           created_at?: string
+          current_model_id?: string | null
           description?: string | null
           id?: string
           name: string
@@ -203,12 +181,107 @@ export type Database = {
         Update: {
           cover_image_url?: string | null
           created_at?: string
+          current_model_id?: string | null
           description?: string | null
           id?: string
           name?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_projects_current_model_id"
+            columns: ["current_model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          project_id: string | null
+          status: Database["public"]["Enums"]["training_status_type"] | null
+          training_completed_at: string | null
+          training_data_id: string | null
+          training_started_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["training_status_type"] | null
+          training_completed_at?: string | null
+          training_data_id?: string | null
+          training_started_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          project_id?: string | null
+          status?: Database["public"]["Enums"]["training_status_type"] | null
+          training_completed_at?: string | null
+          training_data_id?: string | null
+          training_started_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_training_project_id"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_training_training_data_id"
+            columns: ["training_data_id"]
+            isOneToOne: false
+            referencedRelation: "training_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training_data: {
+        Row: {
+          created_at: string
+          id: string
+          num_images: number | null
+          project_id: string | null
+          user_id: string | null
+          zip_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          num_images?: number | null
+          project_id?: string | null
+          user_id?: string | null
+          zip_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          num_images?: number | null
+          project_id?: string | null
+          user_id?: string | null
+          zip_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_training_data_project_id"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -222,12 +295,7 @@ export type Database = {
       model_support_type: "none" | "basic" | "full"
       resolution_type: "720p" | "1080p" | "4k"
       scene_type_type: "studio" | "lifestyle" | "modeling"
-      training_status_type:
-        | "not_started"
-        | "training"
-        | "ready"
-        | "pending"
-        | "failed"
+      training_status_type: "not_started" | "training" | "ready" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -350,13 +418,7 @@ export const Constants = {
       model_support_type: ["none", "basic", "full"],
       resolution_type: ["720p", "1080p", "4k"],
       scene_type_type: ["studio", "lifestyle", "modeling"],
-      training_status_type: [
-        "not_started",
-        "training",
-        "ready",
-        "pending",
-        "failed",
-      ],
+      training_status_type: ["not_started", "training", "ready", "failed"],
     },
   },
 } as const
